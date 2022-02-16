@@ -6,7 +6,7 @@
       "FontSize": 50,
       "RefreshRate": 1000,
       "Language": "English",
-      "Messages": "Hello world. Your Azure WebApp is connected with App Configuration now.",
+      "Messages": "Hello world. Your Azure WebApp is connected to App Configuration now.",
       "BackgroundColor": "HoneyDew"
     }
   }

@@ -22,12 +22,12 @@
    # create webapp
    az webapp create -g <myResourceGroupName> -n <myWebAppName> --runtime "DOTNETCORE|3.1" --plan <myPlanName>
    ```
-   1. Create Azure App Configuration Store, import test configuration file ./sampleconfig.json.
+   1. Create Azure App Configuration Store, import test configuration file [./sampleconfigs.json](./sampleconfigs.json).
    ```
    # create app configuration store
    az appconfig create -g <myResourceGroupName> -n <myAppConfigStoreName> --sku Free -l eastus
    # import test config into app configuration store. If you're using Cloudshell, [upload](https://docs.microsoft.com/en-us/azure/cloud-shell/persisting-shell-storage#upload-files) [sampleconfigs.json](./sampleconfigs.json) before run the command.
-   az appconfig kv import -n <myAppConfigStoreName> --source file --format json --path ./sampleconfigs.json --yes
+   az appconfig kv import -n <myAppConfigStoreName> --source file --format json --path ./sampleconfigs.json --separator : --yes
    ```
    
 
@@ -60,20 +60,23 @@
         More detail at [instruction](https://docs.microsoft.com/en-us/azure/app-service/tutorial-dotnetcore-sqldb-app?toc=%2Faspnet%2Fcore%2Ftoc.json&bc=%2Faspnet%2Fcore%2Fbreadcrumb%2Ftoc.json&view=aspnetcore-6.0&tabs=azure-portal%2Cvisualstudio-deploy%2Cdeploy-instructions-azcli%2Cazure-portal-logs%2Cazure-portal-resources#4---deploy-to-the-app-service).
       - Azure CLI.
         ```
-        az webapp deployment source config-local-git -g yungez-sample216 -n app216
-        az webapp deployment list-publishing-credentials -n app216 -g yungez-sample216 --query "{Username:publishingUserName, Password:publishingPassword}"
+        az webapp deployment source config-local-git -g <myResourceGroupName> -n <myWebAppName>
+        az webapp deployment list-publishing-credentials -g <myResourceGroupName> -n <myWebAppName>  --query "{Username:publishingUserName, Password:publishingPassword}"
+        git remote add azure https://<myWebAppName>.scm.azurewebsites.net/<myWebAppName>.git
+        # push local main branch to remote master branch, the command will prompt for username and password, which are in output of above list-publishing-credentials command
+        git push azure main:master
         ```
-1. Validate the connection is working. Nagivate to your WebApp from browser, you can see the site is up!
+1. Validate the connection is working. Nagivate to your WebApp https://<myWebAppName>.azurewebsites.net/ from browser, you can see the site is up, displaying hello message.
 
 ## Test (optional)
-1. Update value of key `serviceconnector:settings:message` in the App Configuration Store.
+1. Update value of key `SampleApplication:Settings:Messages` in the App Configuration Store.
 ```
-az appconfig kv set -n <myAppConfigStoreName> --key xxxx --value ```
+az appconfig kv set -n <myAppConfigStoreName> --key SampleApplication:Settings:Messages --value hello --yes
 ```
-1. Navigate to your WebApp on Azure ``, refresh the page, you'll see the message displayed is the new key value ``.
+1. Navigate to your WebApp on Azure ``, refresh the page, you'll see the message displayed is `hello`.
 
 ## Cleanup
-Delete the resource group including the WebApp and App Configuration Store created before.
+Delete the resource group with the WebApp and App Configuration Store in it.
 ```
 az group delete -n <myResourceGroupName> --yes
 ```
@@ -81,7 +84,7 @@ az group delete -n <myResourceGroupName> --yes
 ## Useful reference
 There're more Service Connector samples to connect Azure WebApp, Azure Spring Cloud to other Azure services, check them out!
 - xxxxx
-- Spring repo
+- Spring cloud sample repo
 Learn more about [Service Connector](https://aka.ms/scdoc).
 
 ## License
